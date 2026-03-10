@@ -264,6 +264,28 @@
   /* ── ANIMATIONS ── */
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
   @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: none; } }
+
+ /* Fix for Desktop: Prevents overlap of signup box and Logo */
+@media (min-width: 800px) {
+    #bottom-hud {
+        bottom: 5vh !important; /* Pushes the whole bottom section lower */
+    }
+
+    #signup {
+        gap: 10px !important; /* Tightens the gap between input and button slightly */
+    }
+
+    #coming-soon-text {
+        font-size: 1.5rem !important; /* Shrinks the 'Coming Soon' text slightly on desktop */
+        margin-bottom: 5px !important;
+    }
+}
+
+/* Ensure the logo area stays higher up */
+#logo-container {
+    top: 40% !important; /* Moves the logo/title slightly higher than dead-center */
+    transform: translate(-50%, -60%) !important;
+}
 </style>
 </head>
 <body>
@@ -288,13 +310,28 @@
 
   <!-- BOTTOM HUD -->
   <div id="bottom-hud">
-    <div id="coming-soon-text">Coming Soon</div>
-    <div id="signup">
-      <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off">
-      <button id="notify-btn">Notify Me</button>
+  <div id="coming-soon-text">Coming Soon</div>
+  
+  <div id="signup" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto; padding: 20px; box-sizing: border-box;">
+    
+    <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off" style="width: 100%; max-width: 320px; padding: 12px; font-size: 1rem; color: #e8d5b0; background-color: rgba(26,26,46,0.8); border: 1px solid rgba(232,213,176,0.2); border-radius: 4px; box-sizing: border-box;">
+    
+    <div id="consent-row" style="width: 100%; max-width: 320px; margin: 5px 0;">
+      <label class="consent-label" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; cursor: pointer; color: rgba(232,213,176,0.7); font-size: 0.85rem; line-height: 1.4; text-align: left;">
+        <input type="checkbox" id="consent-check" required style="accent-color: #e85d04; margin-top: 3px;">
+        <span style="flex: 1; min-width: 0; word-break: break-word;">
+          I agree to the <a href="privacy.html" class="privacy-link" style="color: #ffd60a; text-decoration: none; font-weight: bold;">Privacy Policy</a> and consent to receive email updates.
+        </span>
+      </label>
     </div>
-    <div id="signup-msg">&nbsp;</div>
+
+    <button id="notify-btn" style="width: 100%; max-width: 320px; padding: 12px; font-size: 1.1rem; color: #1a1a2e; background-color: #e85d04; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background-color 0.2s;">
+      Notify Me
+    </button>
   </div>
+  
+  <div id="signup-msg">&nbsp;</div>
+</div>
 
 </div>
 
@@ -309,7 +346,7 @@
 
 // ── Encryption + signup
 const PUBLIC_KEY_B64 = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp1PpxBpQmZCgvFqI49R8APCPD5T/TX0GKX8FqLGrPGCveiXS1ciDgmAhiuD+Y3kGRVXVaj4QwQ2KF9Dz+2iem8lJpjKjRWM/mP8KPseSgV/8X1xQBawSigXhIrzOXWF4GaQHUNk3kfLv443UHT7E2qGjP8XofBhe755WptFau7acdK66RKBuz+b1hB41IqW1XgXSr2jFh00J3K/qbgdqoDoH5ljeC8Q5E49bkFE3i61JIxiawe52/7lzrnBOdnNJ+Cv8wgI/+EoP0XsoHTteeeoNN+zZP1+eQdB6vdUWjlyzNfC4KoHRYBop+muTTmkOknln1k1JX3n0aDYOIJX/swIDAQAB';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1ebf41_t9dx-i_mCJ6-ql1y0WFXapFVUtMvGQJ39CnbxBFWDW-YlFaN_fLb20-gKU/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrzMlGCS8X9BGGtwPDi0EqzF2rsICW1EDswot1Fw3pPdeG3kXQ-J6RXA7S_xzRtyT5/exec';
 
 async function importPublicKey(b64) {
   const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
@@ -324,34 +361,62 @@ async function encryptEmail(email) {
 }
 
 document.getElementById('notify-btn').addEventListener('click', async () => {
-  const inp = document.getElementById('email-input');
-  const msg = document.getElementById('signup-msg');
-  const consent = document.getElementById('consent-check');
-  const val = inp.value.trim();
-  if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Please enter a valid email address.'; return;
-  }
-  if (!consent.checked) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Please accept the privacy policy to continue.'; return;
-  }
-  const btn = document.getElementById('notify-btn');
-  btn.textContent = 'Sending…'; btn.disabled = true;
-  try {
-    const encryptedEmail = await encryptEmail(val);
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ encrypted_email: encryptedEmail, timestamp: new Date().toISOString(), consent: true })
-    });
-    inp.value = ''; consent.checked = false;
-    msg.style.color = '#ffd60a';
-    msg.textContent = '⚔ You have been added to the watchers of the betrayal. ⚔';
-    setTimeout(() => { msg.textContent = ' '; }, 6000);
-  } catch(err) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Something went wrong. Please try again.';
-  } finally {
-    btn.textContent = 'Notify Me'; btn.disabled = false;
-  }
+    const inp = document.getElementById('email-input');
+    const msg = document.getElementById('signup-msg');
+    const consentElement = document.getElementById('consent-check'); // This must match the ID in your HTML
+    const btn = document.getElementById('notify-btn');
+    const val = inp.value.trim();
+
+    // 1. Validate Email
+    if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Please enter a valid email address.';
+        return;
+    }
+
+    // 2. Validate Consent (Safety Check)
+    // This checks if the element exists AND if it is checked
+    if (!consentElement || !consentElement.checked) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Please accept the privacy policy to continue.';
+        return;
+    }
+
+    // 3. Process Subscription
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    try {
+        const encryptedEmail = await encryptEmail(val);
+        await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                encrypted_email: encryptedEmail,
+                timestamp: new Date().toISOString(),
+                consent: true
+            })
+        });
+
+        // Success State
+        inp.value = '';
+        consentElement.checked = false;
+        msg.style.color = '#ffd60a';
+        msg.textContent = '⚔ You have been added to the watchers of the betrayal. ⚔';
+        
+        setTimeout(() => { 
+            msg.textContent = ' '; 
+        }, 6000);
+
+    } catch (err) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Something went wrong. Please try again.';
+        console.error("Submission error:", err);
+    } finally {
+        btn.textContent = 'Notify Me';
+        btn.disabled = false;
+    }
 });
 
 // ── Ember particles
