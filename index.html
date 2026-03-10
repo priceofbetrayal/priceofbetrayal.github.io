@@ -264,6 +264,28 @@
   /* ── ANIMATIONS ── */
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
   @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: none; } }
+
+ /* Fix for Desktop: Prevents overlap of signup box and Logo */
+@media (min-width: 800px) {
+    #bottom-hud {
+        bottom: 5vh !important; /* Pushes the whole bottom section lower */
+    }
+
+    #signup {
+        gap: 10px !important; /* Tightens the gap between input and button slightly */
+    }
+
+    #coming-soon-text {
+        font-size: 1.5rem !important; /* Shrinks the 'Coming Soon' text slightly on desktop */
+        margin-bottom: 5px !important;
+    }
+}
+
+/* Ensure the logo area stays higher up */
+#logo-container {
+    top: 40% !important; /* Moves the logo/title slightly higher than dead-center */
+    transform: translate(-50%, -60%) !important;
+}
 </style>
 </head>
 <body>
