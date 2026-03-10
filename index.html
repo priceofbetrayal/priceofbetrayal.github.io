@@ -288,25 +288,27 @@
 
   <!-- BOTTOM HUD -->
   <div id="bottom-hud">
-    <div id="coming-soon-text">Coming Soon</div>
-    <div id="signup">
-        <input
-            id="email-input"
-            type="email"
-            placeholder="Enter your email for updates…"
-            autocomplete="off"
-        />
-        
-        <div id="consent-row">
-            <label class="consent-label">
-                <input type="checkbox" id="consent-check" required>
-                <span>I agree to the <a href="privacy.html" class="privacy-link">Privacy Policy</a></span>
-            </label>
-        </div>
-
-        <button id="notify-btn">Notify Me</button>
+  <div id="coming-soon-text">Coming Soon</div>
+  
+  <div id="signup" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto; padding: 20px; box-sizing: border-box;">
+    
+    <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off" style="width: 100%; max-width: 320px; padding: 12px; font-size: 1rem; color: #e8d5b0; background-color: rgba(26,26,46,0.8); border: 1px solid rgba(232,213,176,0.2); border-radius: 4px; box-sizing: border-box;">
+    
+    <div id="consent-row" style="width: 100%; max-width: 320px; margin: 5px 0;">
+      <label class="consent-label" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; cursor: pointer; color: rgba(232,213,176,0.7); font-size: 0.85rem; line-height: 1.4; text-align: left;">
+        <input type="checkbox" id="consent-check" required style="accent-color: #e85d04; margin-top: 3px;">
+        <span style="flex: 1; min-width: 0; word-break: break-word;">
+          I agree to the <a href="privacy.html" class="privacy-link" style="color: #ffd60a; text-decoration: none; font-weight: bold;">Privacy Policy</a> and consent to receive email updates.
+        </span>
+      </label>
     </div>
-    <div id="signup-msg">&nbsp;</div>
+
+    <button id="notify-btn" style="width: 100%; max-width: 320px; padding: 12px; font-size: 1.1rem; color: #1a1a2e; background-color: #e85d04; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background-color 0.2s;">
+      Notify Me
+    </button>
+  </div>
+  
+  <div id="signup-msg">&nbsp;</div>
 </div>
 
 </div>
