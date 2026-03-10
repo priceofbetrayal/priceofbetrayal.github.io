@@ -288,20 +288,25 @@
 
   <!-- BOTTOM HUD -->
   <div id="bottom-hud">
-  <div id="coming-soon-text">Coming Soon</div>
-  <div id="signup">
-    <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off">
-    
-    <div id="consent-row" style="display: block; width: 100%; margin: 10px 0; font-size: 0.7rem; color: rgba(232,213,176,0.7);">
-      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; justify-content: center;">
-        <input type="checkbox" required style="accent-color: var(--fire);">
-        <span>I agree to the <a href="privacy.html" style="color: var(--gold); text-decoration: none;">Privacy Policy</a></span>
-      </label>
-    </div>
+    <div id="coming-soon-text">Coming Soon</div>
+    <div id="signup">
+        <input
+            id="email-input"
+            type="email"
+            placeholder="Enter your email for updates…"
+            autocomplete="off"
+        />
+        
+        <div id="consent-row">
+            <label class="consent-label">
+                <input type="checkbox" id="consent-check" required>
+                <span>I agree to the <a href="privacy.html" class="privacy-link">Privacy Policy</a></span>
+            </label>
+        </div>
 
-    <button id="notify-btn">Notify Me</button>
-  </div>
-  <div id="signup-msg">&nbsp;</div>
+        <button id="notify-btn">Notify Me</button>
+    </div>
+    <div id="signup-msg">&nbsp;</div>
 </div>
 
 </div>
@@ -332,34 +337,62 @@ async function encryptEmail(email) {
 }
 
 document.getElementById('notify-btn').addEventListener('click', async () => {
-  const inp = document.getElementById('email-input');
-  const msg = document.getElementById('signup-msg');
-  const consent = document.getElementById('consent-check');
-  const val = inp.value.trim();
-  if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Please enter a valid email address.'; return;
-  }
-  if (!consent.checked) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Please accept the privacy policy to continue.'; return;
-  }
-  const btn = document.getElementById('notify-btn');
-  btn.textContent = 'Sending…'; btn.disabled = true;
-  try {
-    const encryptedEmail = await encryptEmail(val);
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ encrypted_email: encryptedEmail, timestamp: new Date().toISOString(), consent: true })
-    });
-    inp.value = ''; consent.checked = false;
-    msg.style.color = '#ffd60a';
-    msg.textContent = '⚔ You have been added to the watchers of the betrayal. ⚔';
-    setTimeout(() => { msg.textContent = ' '; }, 6000);
-  } catch(err) {
-    msg.style.color = '#e85d04'; msg.textContent = 'Something went wrong. Please try again.';
-  } finally {
-    btn.textContent = 'Notify Me'; btn.disabled = false;
-  }
+    const inp = document.getElementById('email-input');
+    const msg = document.getElementById('signup-msg');
+    const consentElement = document.getElementById('consent-check'); // This must match the ID in your HTML
+    const btn = document.getElementById('notify-btn');
+    const val = inp.value.trim();
+
+    // 1. Validate Email
+    if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Please enter a valid email address.';
+        return;
+    }
+
+    // 2. Validate Consent (Safety Check)
+    // This checks if the element exists AND if it is checked
+    if (!consentElement || !consentElement.checked) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Please accept the privacy policy to continue.';
+        return;
+    }
+
+    // 3. Process Subscription
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    try {
+        const encryptedEmail = await encryptEmail(val);
+        await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                encrypted_email: encryptedEmail,
+                timestamp: new Date().toISOString(),
+                consent: true
+            })
+        });
+
+        // Success State
+        inp.value = '';
+        consentElement.checked = false;
+        msg.style.color = '#ffd60a';
+        msg.textContent = '⚔ You have been added to the watchers of the betrayal. ⚔';
+        
+        setTimeout(() => { 
+            msg.textContent = ' '; 
+        }, 6000);
+
+    } catch (err) {
+        msg.style.color = '#e85d04';
+        msg.textContent = 'Something went wrong. Please try again.';
+        console.error("Submission error:", err);
+    } finally {
+        btn.textContent = 'Notify Me';
+        btn.disabled = false;
+    }
 });
 
 // ── Ember particles
