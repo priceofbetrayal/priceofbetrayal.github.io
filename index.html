@@ -309,7 +309,7 @@
 
 // ── Encryption + signup
 const PUBLIC_KEY_B64 = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp1PpxBpQmZCgvFqI49R8APCPD5T/TX0GKX8FqLGrPGCveiXS1ciDgmAhiuD+Y3kGRVXVaj4QwQ2KF9Dz+2iem8lJpjKjRWM/mP8KPseSgV/8X1xQBawSigXhIrzOXWF4GaQHUNk3kfLv443UHT7E2qGjP8XofBhe755WptFau7acdK66RKBuz+b1hB41IqW1XgXSr2jFh00J3K/qbgdqoDoH5ljeC8Q5E49bkFE3i61JIxiawe52/7lzrnBOdnNJ+Cv8wgI/+EoP0XsoHTteeeoNN+zZP1+eQdB6vdUWjlyzNfC4KoHRYBop+muTTmkOknln1k1JX3n0aDYOIJX/swIDAQAB';
-const APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1ebf41_t9dx-i_mCJ6-ql1y0WFXapFVUtMvGQJ39CnbxBFWDW-YlFaN_fLb20-gKU/exec';
 
 async function importPublicKey(b64) {
   const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
