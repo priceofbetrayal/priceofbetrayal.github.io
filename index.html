@@ -288,13 +288,21 @@
 
   <!-- BOTTOM HUD -->
   <div id="bottom-hud">
-    <div id="coming-soon-text">Coming Soon</div>
-    <div id="signup">
-      <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off">
-      <button id="notify-btn">Notify Me</button>
+  <div id="coming-soon-text">Coming Soon</div>
+  <div id="signup">
+    <input id="email-input" type="email" placeholder="Enter your email for updates…" autocomplete="off">
+    
+    <div id="consent-row" style="display: block; width: 100%; margin: 10px 0; font-size: 0.7rem; color: rgba(232,213,176,0.7);">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; justify-content: center;">
+        <input type="checkbox" required style="accent-color: var(--fire);">
+        <span>I agree to the <a href="privacy.html" style="color: var(--gold); text-decoration: none;">Privacy Policy</a></span>
+      </label>
     </div>
-    <div id="signup-msg">&nbsp;</div>
+
+    <button id="notify-btn">Notify Me</button>
   </div>
+  <div id="signup-msg">&nbsp;</div>
+</div>
 
 </div>
 
